@@ -227,3 +227,7 @@ $"git:\n${GIT_SUMMARY}\n"
   fi
 }
 
+# Setup zoxide
+eval "$(zoxide init zsh)"
+
+
