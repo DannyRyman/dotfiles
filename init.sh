@@ -41,6 +41,7 @@ install_brew_packages() {
     fzf
     jq
     ripgrep
+    bat
     neovim
   )
   local casks=(
