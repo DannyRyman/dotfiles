@@ -3,7 +3,7 @@ return {
   event = { "BufReadPre", "BufNewFile" },
   config = function()
     local conform = require("conform")
-    local kotlin_formatter_cmd = vim.fn.expand("~/.local/bin/kotlin-format")
+    local ktfmt_cmd = vim.fn.expand("~/.local/bin/ktfmt-wrapper")
 
     conform.setup({
       formatters_by_ft = {
@@ -21,15 +21,15 @@ return {
         liquid = { "prettier" },
         lua = { "stylua" },
         python = { "isort", "black" },
-        kotlin = { "kotlin_formatter" },
+        kotlin = { "ktfmt_wrapper" },
       },
       formatters = {
-        kotlin_formatter = {
-          command = kotlin_formatter_cmd,
-          args = { "-" },
+        ktfmt_wrapper = {
+          command = ktfmt_cmd,
+          args = { "--stdin-name=$FILENAME", "-" },
           stdin = true,
           env = {
-            KOTLIN_FORMATTER_MAX_WIDTH = "160",
+            KTFMT_MAX_WIDTH = "160",
           },
         },
       },
