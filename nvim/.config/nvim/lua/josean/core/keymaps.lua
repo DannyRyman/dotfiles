@@ -22,6 +22,9 @@ keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  
 keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 
+-- saving buffer
+vim.keymap.set("n", "<C-s>", ":wa<CR>", { desc = "Save all buffers" })
+
 local gradle_root_markers = {
   "build.gradle.kts",
   "build.gradle",
@@ -174,8 +177,7 @@ local function convert_gradle_line(line, root)
     end
   end
 
-  local path_col, lnum_col, col_col, msg_col =
-    cleaned:match("([%w%._%-%/%\\:]+%.%a+):(%d+):(%d+)%s*(.*)")
+  local path_col, lnum_col, col_col, msg_col = cleaned:match("([%w%._%-%/%\\:]+%.%a+):(%d+):(%d+)%s*(.*)")
   if path_col then
     local resolved = resolve_project_file(root, path_col)
     if resolved then
@@ -183,8 +185,7 @@ local function convert_gradle_line(line, root)
     end
   end
 
-  local path_simple, lnum_simple, msg_simple =
-    cleaned:match("([%w%._%-%/%\\:]+%.%a+):(%d+)%s*(.*)")
+  local path_simple, lnum_simple, msg_simple = cleaned:match("([%w%._%-%/%\\:]+%.%a+):(%d+)%s*(.*)")
   if path_simple then
     local resolved = resolve_project_file(root, path_simple)
     if resolved then
@@ -192,8 +193,7 @@ local function convert_gradle_line(line, root)
     end
   end
 
-  local fname_in_parens, lnum_in_parens =
-    cleaned:match("%(([%w%._%-%/%\\:]+%.%a+):(%d+)%)")
+  local fname_in_parens, lnum_in_parens = cleaned:match("%(([%w%._%-%/%\\:]+%.%a+):(%d+)%)")
   if fname_in_parens then
     local resolved = resolve_project_file(root, fname_in_parens)
     if resolved then
@@ -236,12 +236,12 @@ local function run_gradle(root, args_list, description)
     cwd = root,
     stdout_buffered = true,
     stderr_buffered = true,
-        on_stdout = function(_, data)
-          append_to_qf(data, description, root)
-        end,
-        on_stderr = function(_, data)
-          append_to_qf(data, description, root)
-        end,
+    on_stdout = function(_, data)
+      append_to_qf(data, description, root)
+    end,
+    on_stderr = function(_, data)
+      append_to_qf(data, description, root)
+    end,
     on_exit = function(_, code)
       vim.schedule(function()
         local level = code == 0 and vim.log.levels.INFO or vim.log.levels.ERROR
@@ -263,11 +263,7 @@ end
 local function run_vim_test(command, description)
   local ok, err = pcall(vim.cmd, command)
   if not ok then
-    vim.notify(
-      ("Failed to run %s: %s"):format(description or command, err),
-      vim.log.levels.ERROR,
-      { title = "Gradle" }
-    )
+    vim.notify(("Failed to run %s: %s"):format(description or command, err), vim.log.levels.ERROR, { title = "Gradle" })
   end
 end
 
