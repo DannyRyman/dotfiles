@@ -3,6 +3,7 @@ return {
   event = { "BufReadPre", "BufNewFile" },
   config = function()
     local conform = require("conform")
+    local kotlin_formatter_cmd = vim.fn.expand("~/.local/bin/kotlin-format")
 
     conform.setup({
       formatters_by_ft = {
@@ -20,6 +21,17 @@ return {
         liquid = { "prettier" },
         lua = { "stylua" },
         python = { "isort", "black" },
+        kotlin = { "kotlin_formatter" },
+      },
+      formatters = {
+        kotlin_formatter = {
+          command = kotlin_formatter_cmd,
+          args = { "-" },
+          stdin = true,
+          env = {
+            KOTLIN_FORMATTER_MAX_WIDTH = "160",
+          },
+        },
       },
       format_on_save = {
         lsp_fallback = true,

@@ -230,6 +230,5 @@ $"git:\n${GIT_SUMMARY}\n"
 # Setup zoxide
 eval "$(zoxide init zsh)"
 
-
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# RipGrep preview
+rgp() { local q="${*// /.*}"; [[ -z "$q" ]] && { echo "Usage: rgp <query>"; return 1; }; rg --no-heading --line-number --color=always -- "$q" | fzf --ansi --delimiter : --preview 'bat --paging=never --style=numbers --color=always --highlight-line {2} {1}' --bind 'enter:become(nvim +{2} {1}),shift-up:preview-page-up,shift-down:preview-page-down,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --preview-window=right:60%:wrap; }
